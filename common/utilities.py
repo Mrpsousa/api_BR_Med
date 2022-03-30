@@ -10,7 +10,7 @@ import sys
 # from itertools import chain
 
 
-def func_name_with_err(text: str):
+def error_handler(text: str):
     """
              Name            : BaseModel
             :class           : Base class with default fields for other classes
