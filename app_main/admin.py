@@ -7,5 +7,5 @@ class BulkAdmin(admin.ModelAdmin):
     list_display = ('euro_dol',
                     'brl_dol',
                     'jpy_dol',
-                    'created_at',
-                    'updated_at')
+                    'of_date',
+                    'created_at')

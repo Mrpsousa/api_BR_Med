@@ -2,7 +2,7 @@ from rest_framework import serializers
 from .models import Values
 
 
-class ValuesSerializer(serializers.ModelSerializer):
+class QuotesSerializer(serializers.ModelSerializer):
     class Meta:
         model = Values
         fields = "__all__"

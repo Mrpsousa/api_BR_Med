@@ -17,6 +17,6 @@ from django.urls import re_path
 
 
 urlpatterns = [
-    re_path('values', BuildGraph.as_view(),
+    re_path('quotes', BuildGraph.as_view(),
             name='valores'),
 ]

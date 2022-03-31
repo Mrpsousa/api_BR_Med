@@ -15,7 +15,8 @@ class Values(BaseModel):
     euro_dol = models.FloatField('euro-dolar', default=0.0)
     brl_dol = models.FloatField('real-dolar', default=0.0)
     jpy_dol = models.FloatField('iene-dolar', default=0.0)
- 
+    of_date = models.CharField(max_length=16)
+    
     class Meta:
         verbose_name_plural = 'Valores'
         verbose_name = 'Valor'
