@@ -9,7 +9,7 @@ import numpy as np
 from .serializers import QuotesSerializer
 
 
-class Quotes():
+class DateValidator():
 
     def return_valid_dates(self) -> list:
         count = 0
@@ -40,7 +40,44 @@ class Quotes():
             raise Exception(error_handler(e))
 
 
-class Main(Quotes):
+class Quotes():
+
+    def __init__(self):
+        pass
+
+    async def save_values(self, quotes: dict):
+        try:
+            if QuotesSerializer(quotes):
+                await sync_to_async(Values.objects.
+                                    update_or_create)(
+                                        euro_dol=quotes['euro_dol'],
+                                        brl_dol=quotes['brl_dol'],
+                                        jpy_dol=quotes['jpy_dol'],
+                                        of_date=quotes['of_date'])
+        except Exception as e:
+            raise Exception(error_handler(e))
+
+    @classmethod
+    def get_quotes_by_date(self, date_: str):
+        try:
+            # if bool(re.match("[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]",
+#             date_)):
+            quotes = Values.objects.filter(of_date=date_['date'])
+            return self.quotes_serializer(quotes)
+        except Exception as e:
+            raise Exception(error_handler(e))
+
+    def quotes_serializer(self, quotes) -> list:
+        quotes_list: list = []
+        try:
+            for quote in quotes:
+                quotes_list.append(QuotesSerializer(quote).data)
+            return quotes_list
+        except Exception as e:
+            raise Exception(error_handler(e))
+
+
+class Main(DateValidator, Quotes):
 
     def __init__(self, url):
         self.all_quotes: list = []
@@ -75,25 +112,12 @@ class Main(Quotes):
         except Exception as e:
             raise Exception(error_handler(e))
 
-   
-    async def save_values(self, quotes: dict):
-        try:
-            if QuotesSerializer(quotes):
-                await sync_to_async(Values.objects.
-                                    update_or_create)(
-                                        euro_dol=quotes['euro_dol'],
-                                        brl_dol=quotes['brl_dol'],
-                                        jpy_dol=quotes['jpy_dol'],
-                                        of_date=quotes['of_date'])
-        except Exception as e:
-            raise Exception(error_handler(e))
-
     async def return_quotes(self) -> list:
         try:
             return self.quotes_list
         except Exception as e:
             raise Exception(error_handler(e))
-
+    
     async def run(self, dates: list) -> dict:
         await self.call_api(dates)
         await self.assemble_values()
