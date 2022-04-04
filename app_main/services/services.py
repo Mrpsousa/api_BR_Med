@@ -10,7 +10,7 @@ main: Main = Main(url)
 
 async def return_qoutes_values():
     try:
-        await main.run(validator.return_valid_dates())
+        await main.run(DateValidator.return_valid_dates())
         return Response(main.quotes_list, status=status.HTTP_200_OK)
     except Exception as e:
         return Response(str(e), status=status.
@@ -29,9 +29,9 @@ def para_teste(data):
                         status=status.HTTP_400_BAD_REQUEST)
 
 
-def return_quotes_by_date(date):
+def return_quotes_by_date(days):
     try:
-        quotes = Quotes.get_quotes_by_date(date)
+        quotes = Quotes.get_quotes_by_date(days)
         return Response(quotes, status=status.HTTP_200_OK)
     except Exception:
         return Response('Error: data format',

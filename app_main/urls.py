@@ -1,4 +1,4 @@
-from .api import BuildGraph, OldQuotes
+from .api import BuildGraph, OldQuotes, MyView
 from django.urls import re_path
 
 
@@ -21,6 +21,8 @@ urlpatterns = [
             name='oldquotes'),
     re_path('quotes', BuildGraph.as_view(),
             name='quotes'),
+    re_path('view', MyView.as_view(),
+            name='view'),
 ]
 
 # class GetHistoryByDate(APIView):

@@ -2,6 +2,7 @@ from common.utilities import error_handler
 from .models import Values
 from asgiref.sync import sync_to_async
 import calendar
+from django.db.models import Q
 import datetime
 from datetime import date
 import aiohttp
@@ -11,6 +12,7 @@ from .serializers import QuotesSerializer
 
 class DateValidator():
 
+    @classmethod
     def return_valid_dates(self) -> list:
         count = 0
         i = 0
@@ -28,6 +30,7 @@ class DateValidator():
         except Exception as e:
             raise Exception(error_handler(e))
 
+    @classmethod
     def verify_valid_date(self, date_: date):
         black_list = ['Sunday', 'Saturday']
         try:
@@ -40,7 +43,7 @@ class DateValidator():
             raise Exception(error_handler(e))
 
 
-class Quotes():
+class Quotes(DateValidator):
 
     def __init__(self):
         pass
@@ -58,15 +61,21 @@ class Quotes():
             raise Exception(error_handler(e))
 
     @classmethod
-    def get_quotes_by_date(self, date_: str):
+    def get_quotes_by_date(self, days: int):
+        quotes: list = []
         try:
-            # if bool(re.match("[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]",
-#             date_)):
-            quotes = Values.objects.filter(of_date=date_['date'])
-            return self.quotes_serializer(quotes)
+            lista = self.return_valid_dates()
+            lista = lista[:days]
+            for date_ in lista:
+                quotes.append(Values.objects.get(of_date=date_))
+            if quotes:
+                return self.quotes_serializer(quotes)
+            else:
+                return []
         except Exception as e:
             raise Exception(error_handler(e))
 
+    @classmethod
     def quotes_serializer(self, quotes) -> list:
         quotes_list: list = []
         try:
@@ -77,7 +86,7 @@ class Quotes():
             raise Exception(error_handler(e))
 
 
-class Main(DateValidator, Quotes):
+class Main(Quotes):
 
     def __init__(self, url):
         self.all_quotes: list = []
@@ -117,9 +126,8 @@ class Main(DateValidator, Quotes):
             return self.quotes_list
         except Exception as e:
             raise Exception(error_handler(e))
-    
+
     async def run(self, dates: list) -> dict:
         await self.call_api(dates)
         await self.assemble_values()
         # await self.return_quotes()
-
